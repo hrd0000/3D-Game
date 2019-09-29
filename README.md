@@ -10,4 +10,4 @@
 
 
 
-演示视频：[模拟太阳系&牧师与魔鬼](https://www.bilibili.com/video/av68569632)
+演示视频：[牧师与魔鬼 动作分离版](https://www.bilibili.com/video/av69333767)
