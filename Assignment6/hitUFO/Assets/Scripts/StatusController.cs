@@ -1,0 +1,109 @@
+﻿using UFO.com;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class StatusController : MonoBehaviour {
+    //各种预设资源
+    public GameObject canvasItem, roundTextItem, scoreTextItem, TipsTextItem;
+    //回合数
+    private int roundNum = 1;
+    //trial数
+    private int trialNum = 1;
+    //得分
+    private int score = 0;
+    //每一个trial的得分上界
+    private int scoreUpBound = 100;
+    //Tips显示的时间
+    private const float TIPS_TEXT_SHOW_TIME = 0.8f;
+
+    private GameObject canvas, roundText, scoreText, TipsText;
+    private SceneController scene;
+
+    void Start() {
+        scene = SceneController.getInstance();
+        scene.setStatusController(this);
+
+        canvas = Instantiate(canvasItem);
+        roundText = Instantiate(roundTextItem, canvas.transform);
+        roundText.GetComponent<Text>().text = "Round: " + roundNum + " Trial: " + trialNum;
+
+        scoreText = Instantiate(scoreTextItem, canvas.transform);
+        scoreText.GetComponent<Text>().text = "Score: " + score + " / " + (roundNum * 100);
+
+        TipsText = Instantiate(TipsTextItem, canvas.transform);
+        showTipsText();
+    }
+
+    void Update() {}
+
+    public int getRoundNum() { return roundNum; }
+
+    void addRoundNum() {
+        roundNum++;
+        roundText.GetComponent<Text>().text = "Round: " + roundNum + " Trial: " + trialNum;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getTrialNum() { return trialNum; }
+
+    public void addScore() {
+        score += 100;
+        scoreText.GetComponent<Text>().text = "Score: " + score + " / " + scoreUpBound;
+
+        Debug.Log(scoreUpBound);
+
+        if (score >= scoreUpBound) {
+            trialNum++;
+            updateScoreUpBound();
+            roundText.GetComponent<Text>().text = "Round: " + roundNum + " Trial: " + trialNum;
+            resetScore();
+            showTipsText();
+        }
+        if (trialNum > 10) {
+            addRoundNum();
+            trialNum = 1;
+            roundText.GetComponent<Text>().text = "Round: " + roundNum + " Trial: " + trialNum;
+            updateScoreUpBound();
+            resetScore();
+            showTipsText();
+        }
+    }
+
+    internal void showSwitchText() {
+        TipsText.GetComponent<Text>().text = "UFO's Action will Change in Next Trail!";
+        TipsText.SetActive(true);
+        StartCoroutine(waitForSomeTimeAndDisappearTipsText());
+    }
+
+    private void updateScoreUpBound() {
+        scoreUpBound = trialNum > 3 ? 300 : trialNum * 100;
+    }
+
+    private void showTipsText() {
+        TipsText.GetComponent<Text>().text = "Round " + roundNum + ": Trial " + trialNum + "!";
+        TipsText.SetActive(true);
+        StartCoroutine(waitForSomeTimeAndDisappearTipsText());
+    }
+
+    IEnumerator waitForSomeTimeAndDisappearTipsText() {
+        yield return new WaitForSeconds(TIPS_TEXT_SHOW_TIME);
+        TipsText.SetActive(false);
+    }
+
+    public void resetScore() {
+        score = 0;
+        scoreText.GetComponent<Text>().text = "Score: " + score + " / " + scoreUpBound;
+    }
+
+
+    public void subScore() {
+        score = score >= 100 ? score - 100 : 0;
+        scoreText.GetComponent<Text>().text = "Score: " + score + " / " + scoreUpBound;
+    }
+}
