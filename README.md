@@ -14,3 +14,4 @@
 
 演示视频：[粒子光环](https://www.bilibili.com/video/av75130549)
 
+演示视频：[血条](https://www.bilibili.com/video/av76451230/)
